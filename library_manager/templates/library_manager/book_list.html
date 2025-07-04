@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}
+
+Book List
+
+{% endblock %}
+
+{% block content %}
+<h3>All books:</h3>
+{% for object in object_list %}
+<h3>{{ object.isbn }}: <a href="{% url 'library:book_detail' object.pk %}">{{object.title}}</a></h3> 
+
+{% endfor %}
+
+<a href="{% url 'library:book_create'%}">Create Book</a>
+
+{% endblock %}

@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<html>
+<head><title>{% block title %}{% endblock title %}</title></head>
+<body>
+    <h1>Library Manager</h1>
+    <a href="{% url 'library:book_list'%}">Book List</a>
+    {% block content %}{% endblock content %}
+</body>
+</html>

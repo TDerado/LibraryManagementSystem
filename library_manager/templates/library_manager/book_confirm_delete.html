@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}
+
+Delete Book
+
+{% endblock %}
+
+{% block content %}
+<h3>Deleting book!</h3>
+<h3>{{ object.isbn }}: {{object.title}}</h3>
+
+<p>Are you sure?</p>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+<button type="submit">Delete Book</button>
+</form>
+ 
+  <a href="{% url 'library:book_list' %}">← Back to list</a>
+
+{% endblock %}

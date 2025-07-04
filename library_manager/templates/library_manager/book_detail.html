@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}
+
+Book Details
+
+{% endblock %}
+
+{% block content %}
+<h3>{{ object.isbn }}: {{object.title}}</h3>
+<p>Authors: |
+{% for author in object.authors.all %}
+{{author.first_name}} {{author.last_name}} |
+{% endfor %}
+</p>
+<p>Publishers: |
+{% for publisher in object.publishers.all %}
+{{publisher.publisher_name}} |
+{% endfor %}
+</p>
+<p>Genres: |
+{% for genre in object.genres.all %}
+{{genre.genre_name}} |
+{% endfor %}
+</p>
+<p>Publication year: {{object.publication_year}}</p>
+<p>language: {{object.language}}</p>
+<p>Quantity: {{object.total_quantity}}</p>
+
+
+<a href="{% url 'library:book_update' object.pk%}">Update Book Information</a>
+<br>
+<a href="{% url 'library:book_delete' object.pk%}">Delete Book</a>
+
+{% endblock %}

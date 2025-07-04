@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}
+
+Book create/update
+
+{% endblock %}
+
+{% block content %}
+<h3>Modify/create book:</h3>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+<button type="submit">Add Book</button>
+</form>
+ 
+  <a href="{% url 'library:book_list' %}">← Back to list</a>
+
+{% endblock %}

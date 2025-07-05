@@ -27,9 +27,9 @@ Book Details
 <p>language: {{object.language}}</p>
 <p>Quantity: {{object.total_quantity}}</p>
 
-
-<a href="{% url 'library:book_update' object.pk%}">Update Book Information</a>
+{% if user.is_authenticated %}
+<a href="{% url 'library:book_update' object.pk%}">Edit Book Information</a>
 <br>
 <a href="{% url 'library:book_delete' object.pk%}">Delete Book</a>
-
+{% endif %}
 {% endblock %}

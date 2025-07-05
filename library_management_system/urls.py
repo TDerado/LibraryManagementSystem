@@ -17,9 +17,15 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from library_manager import views
+
+router = DefaultRouter()
+router.register(r'books', views.BookViewSet, basename='books')
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('accounts/', include('allauth.urls')),
     path("library/", include('library_manager.urls'), name='library'),
+    path('api/', include(router.urls)),
 ]

@@ -2,7 +2,13 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import Books
+from rest_framework import viewsets, permissions
+from .serializers import BookSerializer
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+
+class BookViewSet(viewsets.ModelViewSet):
+    queryset = Books.objects.all().order_by('title')
+    serializer_class = BookSerializer
 
 class BookListView(LoginRequiredMixin, ListView):
     model = Books

@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "allauth.account",
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
+    "rest_framework",
 ]
 
 SITE_ID = 1
@@ -149,6 +150,28 @@ SOCIALACCOUNT_PROVIDERS = {
             'access_type': 'online'
         }
     }
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        # Use SessionAuthentication to leverage Django's session framework
+        # This works well when the API is used by the same web frontend
+        'rest_framework.authentication.SessionAuthentication',
+        # Include BasicAuthentication for simple username/password auth if needed,
+        # but SessionAuthentication is primary for web browser interaction.
+        # 'rest_framework.authentication.BasicAuthentication',
+        # TokenAuthentication is another option for non-browser clients
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        # Require users to be authenticated for all API access by default
+        'rest_framework.permissions.IsAuthenticated',
+        # Alternatives:
+        # 'rest_framework.permissions.IsAuthenticatedOrReadOnly' # Allows anonymous GET requests
+        # 'rest_framework.permissions.AllowAny' # No restrictions (use carefully!)
+    ],
+    # Optional: Default pagination settings
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    # 'PAGE_SIZE': 10
 }
 
 

@@ -30,3 +30,9 @@ operations:
 - library/<isbn>/update/ - allows editing of the book of the given isbn/pk
 - library/<isbn>/delete/ - allows the deletion of the book of the given isbn/pk
 - library/create/ - allows the creation of a new book
+
+assignment 3:
+
+login: either heading to the library/ page or accounts/login/ will allow you to sign up or in, along with the option to use google
+restrictions: listed in operations above, an account made will not be able to access staff options Create, Update, and Delete. 
+- test with google sign up or standard sign up vs the pytyhon manage.py createsuperuser, the superuser will see the CUD while the regular user can see only the list and details page.

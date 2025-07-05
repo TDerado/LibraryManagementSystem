@@ -13,7 +13,7 @@ Book List
 
 {% endfor %}
 
-{% if user.is_authenticated %}
+{% if user.is_staff %}
 <a href="{% url 'library:book_create'%}">Create Book</a>
 {% endif %}
 

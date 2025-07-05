@@ -29,7 +29,7 @@ class BookUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     success_url = reverse_lazy('library:book_list')
 
     def test_func(self):
-        return self.request.is_staff
+        return self.request.user.is_staff
 
 class BookDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Books
@@ -37,4 +37,4 @@ class BookDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     success_url = reverse_lazy('library:book_list')
 
     def test_func(self):
-        return self.request.is_staff
+        return self.request.user.is_staff

@@ -16,3 +16,13 @@ Setup:
 Other:
   - admin privileges:
       - to create an admin use: `python manage.py createsuperuser` and fill out the username and password fields
+
+Assignment 2 additions:
+CRUD Model: Books
+URL for model: /library/
+operations:
+library/ - shows the list of books, contains links to details for every book and for staff has link for the add book option
+library/<isbn>/ - shows the details for the book for the isbn or pk (primary key) given, staff have the update/edit and delete links for the book on this page
+library/<isbn>/update/ - allows editing of the book of the given isbn/pk
+library/<isbn>/delete/ - allows the deletion of the book of the given isbn/pk
+library/create/ - allows the creation of a new book

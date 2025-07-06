@@ -5,6 +5,7 @@ from .models import Books, Members
 from .serializers import BookSerializer, MemberSerializer
 from .permissions import IsOwnerOrReadOnly, IsStaff
 from rest_framework import viewsets, permissions, filters, mixins
+from .paginations import CustomPagination
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 class MemberViewSet(mixins.RetrieveModelMixin,
@@ -19,6 +20,7 @@ class MemberViewSet(mixins.RetrieveModelMixin,
 class BookViewSet(viewsets.ModelViewSet):
     queryset = Books.objects.all().order_by('title')
     serializer_class = BookSerializer
+    pagination_class = CustomPagination
 
     filterset_fields = ['title', 'authors__first_name']
     search_fields = ['title', 'authors__first_name', 'authors__last_name', 'publishers__publisher_name', 'genres__genre_name']

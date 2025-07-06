@@ -22,6 +22,7 @@ from library_manager import views
 
 router = DefaultRouter()
 router.register(r'books', views.BookViewSet, basename='books')
+router.register(r'members', views.MemberViewSet, basename='members')
 
 urlpatterns = [
     path("admin/", admin.site.urls),

@@ -1,14 +1,33 @@
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import Books
-from rest_framework import viewsets, permissions
-from .serializers import BookSerializer
+from .models import Books, Members
+from .serializers import BookSerializer, MemberSerializer
+from .permissions import IsOwnerOrReadOnly
+from rest_framework import viewsets, permissions, filters, mixins
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+
+class MemberViewSet(mixins.RetrieveModelMixin,
+                    mixins.UpdateModelMixin,
+                    mixins.ListModelMixin,
+                    viewsets.GenericViewSet):
+    queryset = Members.objects.all()
+    serializer_class = MemberSerializer
+
+    permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
 
 class BookViewSet(viewsets.ModelViewSet):
     queryset = Books.objects.all().order_by('title')
     serializer_class = BookSerializer
+
+    filterset_fields = ['title', 'authors__first_name']
+    search_fields = ['title', 'authors__first_name', 'publishers__publisher_name', 'genres__genre_name']
+    ordering_fields = ['title', 'genres__genre_name']
+
+    # This is in asignment 2 drf, but Books would not have a owner
+    # permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
+    # def perform_create(self, serializer):
+    #     serializer.save(owner=self.request.user)
 
 class BookListView(LoginRequiredMixin, ListView):
     model = Books

@@ -1,5 +1,8 @@
 from django.db import models
 from django.utils import timezone
+from django.dispatch import receiver
+from django.db.models.signals import post_save
+from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 # Create your models here.
@@ -15,7 +18,6 @@ class Authors(models.Model):
                 ]
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
-
 
 class Publishers(models.Model):
     publisher_id = models.IntegerField(primary_key=True)
@@ -33,16 +35,26 @@ class Genres(models.Model):
         return f"{self.genre_name}"
 
 class Members(models.Model):
-    member_id = models.IntegerField(primary_key=True)
+    #member_id = models.IntegerField(primary_key=True)
+    member_id = models.OneToOneField(User, related_name='user', on_delete=models.CASCADE, primary_key=True)
     first_name = models.CharField(max_length=255, null=True)
     last_name = models.CharField(max_length=255, null=True)
     email = models.EmailField(null=False, unique=True, db_index=True)
     # remember to add a part to hash passwords before storing
-    password = models.TextField(max_length=255, null=False)
+    # password = models.TextField(max_length=255, null=False)
     membership_date = models.DateField(null=False, auto_now_add=True)
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}, {self.email} | created: {self.membership_date}"
+
+@receiver(post_save, sender=User)
+def create_member(sender, instance, created, **kwargs):
+    if created:
+        Members.objects.create(member_id=instance, email=instance.email)
+
+@receiver(post_save, sender=User)
+def save_member(sender, instance, **kwargs):
+    instance.user.save()
 
 class Books(models.Model):
     isbn = models.CharField(max_length=17, primary_key=True)

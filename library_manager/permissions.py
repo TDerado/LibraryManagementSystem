@@ -12,3 +12,11 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
             return False
         
         return obj.member_id == request.user
+    
+class IsStaff(permissions.BasePermission):
+    def has_permission(self, request, view):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        
+        return request.user and request.user.is_staff
+        

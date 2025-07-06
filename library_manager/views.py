@@ -3,7 +3,7 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import Books, Members
 from .serializers import BookSerializer, MemberSerializer
-from .permissions import IsOwnerOrReadOnly
+from .permissions import IsOwnerOrReadOnly, IsStaff
 from rest_framework import viewsets, permissions, filters, mixins
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
@@ -24,10 +24,8 @@ class BookViewSet(viewsets.ModelViewSet):
     search_fields = ['title', 'authors__first_name', 'publishers__publisher_name', 'genres__genre_name']
     ordering_fields = ['title', 'genres__genre_name']
 
-    # This is in asignment 2 drf, but Books would not have a owner
-    # permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
-    # def perform_create(self, serializer):
-    #     serializer.save(owner=self.request.user)
+    permission_classes = [permissions.IsAuthenticated, IsStaff]
+
 
 class BookListView(LoginRequiredMixin, ListView):
     model = Books

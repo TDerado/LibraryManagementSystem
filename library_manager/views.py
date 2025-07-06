@@ -21,7 +21,7 @@ class BookViewSet(viewsets.ModelViewSet):
     serializer_class = BookSerializer
 
     filterset_fields = ['title', 'authors__first_name']
-    search_fields = ['title', 'authors__first_name', 'publishers__publisher_name', 'genres__genre_name']
+    search_fields = ['title', 'authors__first_name', 'authors__last_name', 'publishers__publisher_name', 'genres__genre_name']
     ordering_fields = ['title', 'genres__genre_name']
 
     permission_classes = [permissions.IsAuthenticated, IsStaff]

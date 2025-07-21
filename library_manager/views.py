@@ -38,14 +38,14 @@ class BookDetailView(LoginRequiredMixin, DetailView):
     model = Books
     template_name = 'library_manager/book_detail.html'
 
-class BookCreateView(LoginRequiredMixin, CreateView):
+class BookCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Books
     fields = '__all__'
     template_name = 'library_manager/book_form.html'
     success_url = reverse_lazy('library:book_list')
 
     def test_func(self):
-        return self.request.is_staff
+        return self.request.user.is_staff
 
 class BookUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Books

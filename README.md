@@ -30,3 +30,27 @@ operations:
 - library/<isbn>/update/ - allows editing of the book of the given isbn/pk
 - library/<isbn>/delete/ - allows the deletion of the book of the given isbn/pk
 - library/create/ - allows the creation of a new book
+
+DRF 1:
+- django rest framework added
+- URL for API 'http://127.0.0.1:8000/api/': books/ and members/
+- testing
+    - python manage.py runserver
+    - add data using admin or staff level user
+    - check `http://127.0.0.1:8000/api/books` to see books
+    - check `http://127.0.0.1:8000/api/books/<isbn>` as staff to edit books
+    - check `http://127.0.0.1:8000/api/members` to see member information (should probably be staff only in the future)
+    - check `http://127.0.0.1:8000/api/members/<id>` as owner to edit member info (cannot delete)
+
+DRF 2:
+- usings filters:
+    - filters: needs exact name of book or author (firstname)
+    - search: matches given text with either title, author (first and last name), or publisher
+    - ordering: can order by titles or genres, either acsending and descending
+- pagination change be changed for books by adding page_size after books/ -> `books/?page_size=<number>`
+- only staff can create/edit/delete books, while users can only view. Users can edit their own member information, but cannot delete it.
+- testing:
+    - python manage.py runserver
+    - check api/books/ as nonuser, user, and admin/staff
+    - see CRUD options available for each
+    - check api/members/<member_id> for non owner and owner (created when user signs up, matches sign up email)

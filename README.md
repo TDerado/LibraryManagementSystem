@@ -17,7 +17,7 @@ Other:
   - admin privileges:
       - to create an admin use: `python manage.py createsuperuser` and fill out the username and password fields
 
-Assignment 2 additions:
+additions:
 
 CRUD Model: Books
 
@@ -54,3 +54,23 @@ DRF 2:
     - check api/books/ as nonuser, user, and admin/staff
     - see CRUD options available for each
     - check api/members/<member_id> for non owner and owner (created when user signs up, matches sign up email)
+
+Deployment:
+
+- process:
+    - create an IAM Role with the `AmazonEC2ContainerRegistryReadOnly` policy
+    - (AWS) build an image with `docker build -t myapp .`
+    - adding tag `docker tag myapp:latest <repo-AWS-URI>/<AWS-repo-name>:latest`
+    - pushing the image to ECR `docker push <repo-AWS-URI>/<AWS-repo-name>:latest`
+    - start a EC2 instance, set up security rules to allows you to access ssh, TCP for port 8000 from anywhere to allow web traffic and HTTP/S from anywhere
+    - select the IAM in the advanced details
+    - connect to the instance and install docker and docker compose
+    - upload the docker-compose.yml and .env files with scp to the EC2 instance
+    - modify env variables to fit the EC2 ip for allowed hosts and CSRF_TRUSTED_ORIGINS and set DEBUG to False
+    - modify the docker-compose.yml image to use the ECR image and remove the migrate part of command and the mounted volume for the web service
+    - run `docker compose up -d`
+    - run `docker compose exec web python manage.py migrate to set up the database`
+    - server should be running and viewable from https://<EC2-public-ip>:8000 (/library or /api is recommended as homepage does not display anything)
+    - docker compose down to stop the server
+
+    test server ip (down): https://18.223.110.101

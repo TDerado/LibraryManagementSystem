@@ -4,9 +4,11 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from .models import Books, Members
 from .serializers import BookSerializer, MemberSerializer
 from .permissions import IsOwnerOrReadOnly, IsStaff
-from rest_framework import viewsets, permissions, filters, mixins
+from rest_framework import viewsets, permissions, filters, mixins, status
 from .paginations import CustomPagination
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from rest_framework.views import APIView
+from rest_framework.response import Response
 
 class MemberViewSet(mixins.RetrieveModelMixin,
                     mixins.UpdateModelMixin,
@@ -63,3 +65,8 @@ class BookDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def test_func(self):
         return self.request.user.is_staff
+    
+class HealthCheckView(APIView):
+    permission_classes = [permissions.AllowAny]
+    def get(self, request, *args, **kwargs):
+        return Response({"status": "ok"}, status=status.HTTP_200_OK)

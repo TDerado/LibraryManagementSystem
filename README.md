@@ -74,3 +74,43 @@ Deployment:
     - docker compose down to stop the server
 
     test server ip (down): https://18.223.110.101
+
+Orchestration:
+
+- changes to django:
+    - added HealthCheckView(APIView) with permissions AllowAny that returns a 200 when accessed
+    - added the healthCheckView to urls
+
+- setting up:
+    - this setup uses minkube to locally test orchestration, to use a server make take services like EKS which will incur costs to run
+    - install minikube with https://minikube.sigs.k8s.io/docs/start/?arch=%2Fwindows%2Fx86-64%2Fstable%2F.exe+download for your OS
+    - also get kubectl on https://kubernetes.io/docs/tasks/tools/install-kubectl-windows/ make sure to use the guide for your OS
+    - if you plan to use helm best to install now as well: https://helm.sh/docs/intro/install/ scroll down till your OS instructions
+    - start minikube with `minikube start` or `minikube start --driver=docker` if want to use docker (be sure docker desktop is running for this)
+    - create a secret file for both postgres.env and the app.env (names are not concrete and files with be deleted later)
+      - the postgres file should contain `POSTGRES_PASSWORD=<put_password_here>` and be created using the command `kubectl create secret generic postgres-secret --from-env-file=postgres.env` change last part to the file name used
+      - the app secrets need the SECRET_KEY, DATABASE_URL, and if using google auth also the GOOGLE_CLIENT_ID, and GOOGLE_CLIENT_SECRET. the database url should be changed to have host as postgres-service or what name is used in postgres-service.yaml example (postgres://user:pass@postgres-service:5432/dbname) then use `kubectl create secret generic app-secret --from-env-file=app.env` again with the file annme as your temporary file
+      - preferrably delete temp secret files now
+    - using git bash terminal connect to minkube with eval $(minikube -p minikube docker-env) and build the image using `docker build -t <image-name:tag> .` the current image name used is `library_management_system:latest` and is set in app-deployment.yaml, so if you use a different name be sure to update the yaml file as well
+    - use `kubectl apply -f k8s/postgres-pvc.yaml -f k8s/postgres-deployment.yaml -f k8s/postgres-service.yaml -f k8s/app-configmap.yaml -f k8s/app-deployment.yaml -f k8s/app-service.yaml` to run all yaml files or each can be done separately
+    - use kubectl get pods to see the app deployment names
+    - after postgres pod is ready run the migrate command on any of the app's pods - `kubectl exec <your-app-pod-name-here> -- python manage.py migrate`
+    - after the migrate is complete wait for the app pods to be ready as well
+    - the service can be accessed with multiple methods:
+      - `minikube service app-service --url` (the `app-service` name is set in app-service.yaml if not found check there)
+      - kubectl get svc app-service (same blurb as above)
+      - kubectl port-forward service/app-service 8000:80 (fallback with port forwarding)
+- Helm:
+    - using helm first run `helm repo add prometheus-community https://prometheus-community.github.io/helm-charts`
+    - then `helm repo update`
+    - then install `helm install prom-stack prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace --version 72.0.1` change version to latest on artifacthub for kube-prometheus-stack
+    - check the new monitoring pods with `kubectl get pods -n monitoring`
+    - when they are ready, use `kubectl get svc -n monitoring` to find the name of grafana and run `kubectl get secret --namespace monitoring prom-stack-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo` if grafana isnt named prom-stack-grafana change the name used in this command to match it. ps. run in the git bash terminal if you are having issues
+    - port forward grafana with `kubectl port-forward --namespace monitoring svc/prom-stack-grafana 3000:80` (again if the name is different change it to match)
+    - open the monitoring website with `http://localhost:3000`
+    - login with username: admin and the password you got earlier
+
+- extra:
+    - scaling: use `kubectl scale deployment app-deployment --replicas=3` to change the replicas amount to a desired number (note any reset or applying the app-deployment.yaml again will revert to the amount stated in app-deployment.yaml)
+    - update: yaml updates will be rolling updates, run a kubectl apply on a changed file and with `kubectl rollout status deployment/app-deployment` you can watch the pods update/terminal and create new ones.
+    - roll back: `kubectl rollout undo deployment/app-deployment` (again, if you changed the name app-deployment, change it here too)

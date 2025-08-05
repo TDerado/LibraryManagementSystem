@@ -3,5 +3,5 @@ kind: ConfigMap
 metadata:
   name: app-configmap
 data:
-  DEBUG: "True"
+  DEBUG: "False"
   ALLOWED_HOSTS: "*"
